@@ -167,26 +167,26 @@ public class SqlConfigProvider extends ConfigProvider {
                 var sql =
                         "SELECT COUNT(*) AS CNTREC FROM pragma_table_info('cameras') WHERE name='otherpaths_json';";
                 var result = oldCameraTableStatement.executeQuery(sql);
-                logger.debug("otherpaths_json: " + String.valueOf(result.getInt("CNTREC")));
+                // logger.debug("otherpaths_json: " + String.valueOf(result.getInt("CNTREC")));
                 if (result.getInt("CNTREC") == 0) {
                     // This is an older table, need to migrate to the new format
                     oldTable = true;
                 }                
             } catch (SQLException e) {
                 logger.error("Err checking for missing otherpaths_json column in cameras table", e);
-            }            
-            logger.debug("otherpaths_json missing: " + String.valueOf(oldTable));
+            }
+
+            // logger.debug("otherpaths_json missing: " + String.valueOf(oldTable));
             
             if (oldTable == true){
                 try {
                     updateCameraTableStatement = conn.createStatement();
-                    // String[] otherPaths = {};
                     var sql = 
                             "ALTER TABLE cameras ADD COLUMN otherpaths_json TEXT NOT NULL DEFAULT '[]'";
                     updateCameraTableStatement.execute(sql);
-                    logger.debug("Added column otherpaths_json to cameras table");
+                    logger.info("Added column otherpaths_json to cameras table");
                 } catch (SQLException e) {
-                    logger.error("Err updating cameras table with otherpaths_json column", e);
+                    logger.error("Err adding otherpaths_json column to cameras table", e);
                 }
             }
 
@@ -196,6 +196,7 @@ public class SqlConfigProvider extends ConfigProvider {
                 if (createGlobalTableStatement != null) createGlobalTableStatement.close();
                 if (createCameraTableStatement != null) createCameraTableStatement.close();
                 if (oldCameraTableStatement != null) oldCameraTableStatement.close();
+                if (updateCameraTableStatement != null) updateCameraTableStatement.close();
                 if (conn != null) conn.close();
             } catch (SQLException e) {
                 e.printStackTrace();
