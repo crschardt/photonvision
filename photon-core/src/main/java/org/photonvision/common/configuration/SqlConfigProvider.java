@@ -171,18 +171,17 @@ public class SqlConfigProvider extends ConfigProvider {
                 if (result.getInt("CNTREC") == 0) {
                     // This is an older table, need to migrate to the new format
                     oldTable = true;
-                }                
+                }
             } catch (SQLException e) {
                 logger.error("Err checking for missing otherpaths_json column in cameras table", e);
             }
 
             // logger.debug("otherpaths_json missing: " + String.valueOf(oldTable));
-            
-            if (oldTable == true){
+
+            if (oldTable == true) {
                 try {
                     updateCameraTableStatement = conn.createStatement();
-                    var sql = 
-                            "ALTER TABLE cameras ADD COLUMN otherpaths_json TEXT NOT NULL DEFAULT '[]'";
+                    var sql = "ALTER TABLE cameras ADD COLUMN otherpaths_json TEXT NOT NULL DEFAULT '[]'";
                     updateCameraTableStatement.execute(sql);
                     logger.info("Added column otherpaths_json to cameras table");
                 } catch (SQLException e) {
