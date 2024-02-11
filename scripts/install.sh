@@ -109,6 +109,10 @@ EOF
   echo "network-manager installation complete."
 fi
 
+echo "Installing net-tools..."
+apt-get install --yes net-tools
+echo "net-tools installation complete."
+
 echo "Installing the JRE..."
 if ! package_is_installed openjdk-17-jre-headless
 then
