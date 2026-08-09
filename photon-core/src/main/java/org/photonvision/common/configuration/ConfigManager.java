@@ -73,7 +73,7 @@ public class ConfigManager {
 
     public static ConfigManager getInstance() {
         if (INSTANCE == null) {
-            Path rootFolder = PathManager.getInstance().getRootFolder();
+            Path rootFolder = PathManager.getInstance().getConfigFolder();
             switch (m_saveStrat) {
                 case SQL -> INSTANCE = new ConfigManager(rootFolder, new SqlConfigProvider(rootFolder));
                 case LEGACY ->
@@ -134,14 +134,14 @@ public class ConfigManager {
             }
 
             // Save the same config out using SQL loader
-            var sql = new SqlConfigProvider(getRootFolder());
+            var sql = new SqlConfigProvider(getConfigFolder());
             sql.setConfig(loadedConfig);
             sql.saveToDisk();
         }
     }
 
     public static boolean nukeConfigDirectory() {
-        return FileUtils.deleteDirectory(getRootFolder());
+        return FileUtils.deleteDirectory(getConfigFolder());
     }
 
     public static boolean saveUploadedSettingsZip(File uploadPath) {
@@ -163,13 +163,13 @@ public class ConfigManager {
             legacy.load();
             var loadedConfig = legacy.getConfig();
 
-            var sql = new SqlConfigProvider(getRootFolder());
+            var sql = new SqlConfigProvider(getConfigFolder());
             sql.setConfig(loadedConfig);
             return sql.saveToDisk();
         } else {
             // new structure -- just copy and save like we used to
             try {
-                org.apache.commons.io.FileUtils.copyDirectory(folderPath, getRootFolder().toFile());
+                org.apache.commons.io.FileUtils.copyDirectory(folderPath, getConfigFolder().toFile());
                 logger.info("Copied settings successfully!");
                 return true;
             } catch (IOException e) {
@@ -183,12 +183,12 @@ public class ConfigManager {
         return m_provider.getConfig();
     }
 
-    private static Path getRootFolder() {
-        return PathManager.getInstance().getRootFolder();
+    private static Path getConfigFolder() {
+        return PathManager.getInstance().getConfigFolder();
     }
 
     public static Path getImageMetadataPath() {
-        return Path.of(getRootFolder().toString(), "image-metadata.json");
+        return PathManager.getInstance().getRootFolder().resolve("image-metadata.json");
     }
 
     ConfigManager(Path configDirectory, ConfigProvider provider) {

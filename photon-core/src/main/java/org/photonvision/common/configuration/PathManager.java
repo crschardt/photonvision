@@ -40,10 +40,14 @@ public class PathManager {
     }
 
     private PathManager() {
-        this.configDirectoryFile = new File(getRootFolder().toUri());
+        this.configDirectoryFile = new File(getConfigFolder().toUri());
     }
 
     public Path getRootFolder() {
+        return Path.of("");
+    }
+    
+    public Path getConfigFolder() {
         return Path.of("photonvision_config");
     }
 
